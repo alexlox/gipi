@@ -5,4 +5,10 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return render(request, 'gipi_app/index.html')
+    context = {
+        "user": {
+            "authenticated": False,
+            "username": ""
+        }
+    }
+    return render(request, 'gipi_app/index.html', context)

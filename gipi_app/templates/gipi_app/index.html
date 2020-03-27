@@ -8,7 +8,23 @@
     <link rel="stylesheet" type="text/css" href="{% static 'gipi_app/css/style.css' %}">
 </head>
 <body>
-    <button id="startRecord" name="startRecording">Start Record</button>
+    <nav>
+        {% if not user.authenticated %}
+            <button id="signUpBtn" class="navButton">Sign up</button>
+            <button id="logInBtn" class="navButton">Log in</button>
+        {% else %}
+            <span>Welcome, {{ user.username }}!</span>
+            <button id="logOutBtn" class="navButton">Log out</button>
+        {% endif %}
+    </nav>
+    <div id="container">
+        {% if not user.authenticated %}
+            <span>Please log in/sign up to continue!</span>
+        {% else %}
+            <button id="startRecord" name="startRecording">Start Record</button>
+        {% endif %}
+    </div>
+
     <script src="{% static 'gipi_app/js/index.js' %}"></script>
 </body>
 </html>
