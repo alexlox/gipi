@@ -1,5 +1,54 @@
-#startRecord {
-    border: none;
-    color: #ffffff;
-    background-color: #333333;
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+nav {
+    width: 100%;
+    background-color: azure;
+    height: 3rem;
+    display: flex;
+    justify-content: flex-end;
+    align-content: center;
+    align-items: center;
+    box-shadow: #282727 0 2px 5px;
+}
+
+nav > button {
+    margin: 0 0.5rem;
+}
+
+#container {
+    width: 100%;
+    height: calc(100% - 3rem);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+button {
+    width: 4rem;
+    border: #282727 solid 1px;
+    border-radius: 5%;
+    height: 2rem;
+    background-color: #f8faf7;
+    color: #282727;
+    transition: 0.1s ease-in-out;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #d5d7d4;
+}
+
+button:active {
+    color: #f8faf7;
+    background-color: #282727;
+}
+
+#loginMessage {
+    color: #bc0000;
 }

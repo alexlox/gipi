@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gipi - Login</title>
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'gipi_app/css/style.css' %}">
+</head>
+<body>
+    <div id="container">
+        <form id="loginForm">
+            <label title="Username">
+                <input id="inUsername" type="text" name="username" placeholder="Username" required />
+            </label>
+            <label title="Password">
+                <input id="inPassword" type="password" name="password" placeholder="Password" required />
+            </label>
+
+            <button type="submit" name="submit">Submit</button>
+        </form>
+        <p id="loginMessage"></p>
+    </div>
+
+    <script src="{% static 'gipi_app/js/index.js' %}"></script>
+</body>
+</html>

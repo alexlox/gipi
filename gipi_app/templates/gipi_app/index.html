@@ -10,18 +10,18 @@
 <body>
     <nav>
         {% if not user.authenticated %}
-            <button id="signUpBtn" class="navButton">Sign up</button>
-            <button id="logInBtn" class="navButton">Log in</button>
+            <button id="signUpBtn">Sign up</button>
+            <button id="logInBtn">Log in</button>
         {% else %}
             <span>Welcome, {{ user.username }}!</span>
-            <button id="logOutBtn" class="navButton">Log out</button>
+            <button id="logOutBtn">Log out</button>
         {% endif %}
     </nav>
     <div id="container">
         {% if not user.authenticated %}
             <span>Please log in/sign up to continue!</span>
         {% else %}
-            <button id="startRecord" name="startRecording">Start Record</button>
+            <button id="record">Start Record</button>
         {% endif %}
     </div>
 
