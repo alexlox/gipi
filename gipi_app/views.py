@@ -1,16 +1,20 @@
 from django.shortcuts import render
 from django.http import HttpResponseBadRequest, HttpResponse
-from gipi_app.models import User
+from .models import User
 from django.contrib.auth.hashers import make_password
 
 # Create your views here.
 
 
 def index(request):
+
+    authenticated = True if "username" in request.session else False
+    username = request.session["username"] if "username" in request.session else ""
+
     context = {
         "user": {
-            "authenticated": False,
-            "username": ""
+            "authenticated": authenticated,
+            "username": username
         }
     }
     return render(request, 'gipi_app/index.html', context)
@@ -37,7 +41,23 @@ def login(request):
 
     return resp
 
-    # if len(User.objects.filter(username=username)) != 0:
-    #     return HttpResponseBadRequest('{ "message": "Username already taken." }')
 
+def sign_up(request):
+    if request.method == 'GET':
+        return render(request, 'gipi_app/sign_up.html')
 
+    username = request.body['username'].strip()
+    password = request.body['password'].strip()
+
+    if username == '' or password == '':
+        return HttpResponseBadRequest('{ "message": "Please fill all fields." }')
+    if len(username) > 64:
+        return HttpResponseBadRequest('{ "message": "Username is too big." }')
+    if len(User.objects.filter(username=username)) != 0:
+        return HttpResponseBadRequest('{ "message": "Username already taken." }')
+
+    user = User(username=username, password=make_password(password))
+    user.save()
+
+    request.session["username"] = username
+    return HttpResponse()

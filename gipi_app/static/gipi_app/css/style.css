@@ -52,3 +52,17 @@ button:active {
 #loginMessage {
     color: #bc0000;
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+form input {
+    margin-bottom: 0.5rem;
+    width: 10rem;
+    height: 2rem;
+}

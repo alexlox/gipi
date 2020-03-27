@@ -19,7 +19,7 @@
     </nav>
     <div id="container">
         {% if not user.authenticated %}
-            <span>Please log in/sign up to continue!</span>
+            <span>Please <a href="/login">log in</a> or <a href="/signUp">sign up</a> to continue!</span>
         {% else %}
             <button id="record">Start Record</button>
         {% endif %}

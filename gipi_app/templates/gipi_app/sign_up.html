@@ -2,9 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Gipi - Sign Up</title>
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'gipi_app/css/style.css' %}">
 </head>
 <body>
+    <div id="container">
+        <form id="signupForm">
+            <label>Username
+                <input id="inUsername" type="text" name="username" placeholder="Username" required maxlength="64" />
+            </label>
+            <label>Password
+                <input id="inPassword" type="password" name="password" placeholder="Password" required />
+            </label>
 
+            <button type="submit" name="submit">Sign Up</button>
+        </form>
+        <p id="signupMessage"></p>
+    </div>
+
+    <script src="{% static 'gipi_app/js/registration.js' %}"></script>
 </body>
 </html>
