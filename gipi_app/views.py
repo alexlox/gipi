@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponseBadRequest, HttpResponse
-from .models import User
+from .models import User, History
 from django.contrib.auth.hashers import make_password, check_password
 import json
+from datetime import datetime
 
 # Create your views here.
 
@@ -84,3 +85,25 @@ def sign_up(request):
 def log_out(request):
     del request.session['username']
     return redirect('/')
+
+
+def coordinates(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest()
+
+    data = json.loads(request.body)
+
+    # Error Handling
+    if 'latitude' not in data or 'longitude' not in data or 'timestamp' not in data:
+        return HttpResponseBadRequest('{ "message": "Provide longitude, latitude and timestamp." }')
+    if data['timestamp'] is not float and data['timestamp'] is not int:
+        return HttpResponseBadRequest('{ "message": "Timestamp must be a number in POSIX format." }')
+    if data['latitude'] is not float or data['longitude'] is not float:
+        return HttpResponseBadRequest('{ "message": "Latitude and longitude must be decimal point numbers." }')
+
+    timestamp = datetime.fromtimestamp(data['timestamp'])
+
+    history = History(latitude=data['latitude'], longitude=data['longitude'], timestamp=timestamp)
+    history.save()
+
+    return HttpResponse()
