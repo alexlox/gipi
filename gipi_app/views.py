@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponseBadRequest, HttpResponse
 from .models import User
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
+import json
 
 # Create your views here.
 
@@ -24,15 +25,27 @@ def login(request):
     if request.method == 'GET':
         return render(request, 'gipi_app/login.html')
 
-    username = request.body['username'].strip()
-    password = request.body['password'].strip()
+    data = json.loads(request.body)
+
+    if 'username' not in data or 'password' not in data:
+        return HttpResponseBadRequest('{ "message": "Please fill all fields." }')
+
+    username = data['username'].strip()
+    password = data['password'].strip()
 
     if username == '' or password == '':
         return HttpResponseBadRequest('{ "message": "Please fill all fields." }')
 
     resp = HttpResponse()
 
-    if len(User.objects.filter(username=username, password=make_password(password))) > 0:
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        resp.status_code = 401
+        resp.write('{ "message": "Wrong username or password." }')
+        return resp
+
+    if check_password(password, user.password):
         request.session["username"] = username
         resp.status_code = 200
     else:
@@ -46,8 +59,13 @@ def sign_up(request):
     if request.method == 'GET':
         return render(request, 'gipi_app/sign_up.html')
 
-    username = request.body['username'].strip()
-    password = request.body['password'].strip()
+    data = json.loads(request.body)
+
+    if 'username' not in data or 'password' not in data:
+        return HttpResponseBadRequest('{ "message": "Please fill all fields." }')
+
+    username = data['username'].strip()
+    password = data['password'].strip()
 
     if username == '' or password == '':
         return HttpResponseBadRequest('{ "message": "Please fill all fields." }')
@@ -59,5 +77,10 @@ def sign_up(request):
     user = User(username=username, password=make_password(password))
     user.save()
 
-    request.session["username"] = username
+    request.session['username'] = username
     return HttpResponse()
+
+
+def log_out(request):
+    del request.session['username']
+    return redirect('/')

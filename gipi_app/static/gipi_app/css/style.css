@@ -24,6 +24,7 @@ nav > button {
     width: 100%;
     height: calc(100% - 3rem);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     align-content: center;
@@ -40,6 +41,10 @@ button {
     cursor: pointer;
 }
 
+#record {
+    width: 6rem;
+}
+
 button:hover {
     background-color: #d5d7d4;
 }
@@ -49,7 +54,7 @@ button:active {
     background-color: #282727;
 }
 
-#loginMessage {
+#loginMessage, #signupMessage {
     color: #bc0000;
 }
 

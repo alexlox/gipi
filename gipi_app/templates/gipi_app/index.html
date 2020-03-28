@@ -21,10 +21,11 @@
         {% if not user.authenticated %}
             <span>Please <a href="/login">log in</a> or <a href="/signUp">sign up</a> to continue!</span>
         {% else %}
-            <button id="record">Start Record</button>
+            <button id="record" data-action="start">Start Record</button>
         {% endif %}
     </div>
 
+    {% csrf_token %}
     <script src="{% static 'gipi_app/js/index.js' %}"></script>
 </body>
 </html>
