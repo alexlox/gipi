@@ -49,18 +49,32 @@ window.onload = () => {
 };
 
 function recordCoordinates() {
+    let timestamp = new Date(); // Register timestamp before the geolocation returns the coordinates
+
     navigator.geolocation.getCurrentPosition(position => {
         let csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
         let xhr = new XMLHttpRequest();
         let body = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
-            timestamp: Date.now()
+            timestamp: timestamp.toISOString()
         };
+
+        console.dir(body);
 
         xhr.open("POST", "/coordinates", true);
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.setRequestHeader("X-CSRFToken", csrfToken);
         xhr.send(JSON.stringify(body));
+
+        xhr.onload = () => {
+            if (xhr.status !== 200) {
+                console.error(xhr.responseText);
+            }
+        };
+
+        xhr.onerror = () => {
+            console.error("Connection problem.");
+        };
     });
 }

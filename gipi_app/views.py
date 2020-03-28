@@ -3,7 +3,7 @@ from django.http import HttpResponseBadRequest, HttpResponse
 from .models import User, History
 from django.contrib.auth.hashers import make_password, check_password
 import json
-from datetime import datetime
+import dateutil.parser
 
 # Create your views here.
 
@@ -96,14 +96,13 @@ def coordinates(request):
     # Error Handling
     if 'latitude' not in data or 'longitude' not in data or 'timestamp' not in data:
         return HttpResponseBadRequest('{ "message": "Provide longitude, latitude and timestamp." }')
-    if data['timestamp'] is not float and data['timestamp'] is not int:
-        return HttpResponseBadRequest('{ "message": "Timestamp must be a number in POSIX format." }')
-    if data['latitude'] is not float or data['longitude'] is not float:
+    if type(data['latitude']) is not float or type(data['longitude']) is not float:
         return HttpResponseBadRequest('{ "message": "Latitude and longitude must be decimal point numbers." }')
 
-    timestamp = datetime.fromtimestamp(data['timestamp'])
+    timestamp = dateutil.parser.isoparse(data['timestamp'])
+    user = User.objects.filter(username=request.session['username'])[0]
 
-    history = History(latitude=data['latitude'], longitude=data['longitude'], timestamp=timestamp)
+    history = History(latitude=data['latitude'], longitude=data['longitude'], timestamp=timestamp, user=user)
     history.save()
 
     return HttpResponse()
