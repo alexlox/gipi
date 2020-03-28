@@ -1,4 +1,8 @@
+let mockCoordinates;
+
 window.onload = () => {
+    loadMockCoordinates();
+
     if (!navigator.geolocation) {
         alert("Geolocation is not available on your device or browser.");
         return;
@@ -65,7 +69,7 @@ function recordCoordinates() {
         xhr.open("POST", "/coordinates", true);
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.setRequestHeader("X-CSRFToken", csrfToken);
-        xhr.send(JSON.stringify(body));
+        //xhr.send(JSON.stringify(body));
 
         xhr.onload = () => {
             if (xhr.status !== 200) {
@@ -77,4 +81,27 @@ function recordCoordinates() {
             console.error("Connection problem.");
         };
     });
+}
+
+function loadMockCoordinates() {
+    let csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+    let xhr = new XMLHttpRequest();
+
+    xhr.open("GET", "/static/gipi_app/js/mock_coordinates.json", true);
+    xhr.setRequestHeader("X-CSRFToken", csrfToken);
+    xhr.send();
+
+    xhr.onload = () => {
+        if (xhr.status !== 200) {
+            alert("Mock coordinates did not load.");
+            return;
+        }
+
+        mockCoordinates = JSON.parse(xhr.responseText);
+        console.dir(mockCoordinates);
+    };
+
+    xhr.onerror = () => {
+        alert("Mock coordinates did not load (connection problem).");
+    }
 }
