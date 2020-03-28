@@ -1,7 +1,5 @@
-let mockCoordinates;
-
 window.onload = () => {
-    loadMockCoordinates();
+    // loadMockCoordinates();
 
     if (!navigator.geolocation) {
         alert("Geolocation is not available on your device or browser.");
@@ -24,7 +22,7 @@ window.onload = () => {
                     recordButton.innerText = "Stop Record";
                     recordButton.dataset.action = "stop";
 
-                    intervalID = setInterval(recordCoordinates, 5000);
+                    intervalID = setInterval(recordCoordinates, 5000 * 60);
                     break;
                 case 'stop':
                     recordButton.innerText = "Start Record";
@@ -69,7 +67,7 @@ function recordCoordinates() {
         xhr.open("POST", "/coordinates", true);
         xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
         xhr.setRequestHeader("X-CSRFToken", csrfToken);
-        //xhr.send(JSON.stringify(body));
+        xhr.send(JSON.stringify(body));
 
         xhr.onload = () => {
             if (xhr.status !== 200) {
@@ -97,11 +95,48 @@ function loadMockCoordinates() {
             return;
         }
 
-        mockCoordinates = JSON.parse(xhr.responseText);
-        console.dir(mockCoordinates);
+        let mockCoordinates = JSON.parse(xhr.responseText);
+        uploadMockHistory(mockCoordinates)
     };
 
     xhr.onerror = () => {
         alert("Mock coordinates did not load (connection problem).");
+    }
+}
+
+function uploadMockHistory (mockCoordinates) {
+    console.log("Start upload mock coordinates");
+    let startTime = new Date(2020, 3, 24, 7, 15, 0),
+        actualTime;
+
+    for (let i = 0; i < mockCoordinates.length; i++) {
+        // plus 5 minutes for every coordinate
+        // timezone needs to be taken into consideration because here toISOString() will return in UTC
+        actualTime = new Date(startTime.getTime() + 1000 * 60 * 5 * i - startTime.getTimezoneOffset() * 60000);
+
+        let csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value;
+        let xhr = new XMLHttpRequest();
+        let body = {
+            latitude: mockCoordinates[i].coords.latitude,
+            longitude: mockCoordinates[i].coords.longitude,
+            timestamp: actualTime.toISOString()
+        };
+
+        xhr.open("POST", "/coordinates", true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.setRequestHeader("X-CSRFToken", csrfToken);
+        xhr.send(JSON.stringify(body));
+
+        xhr.onload = () => {
+            if (xhr.status !== 200) {
+                console.error(xhr.responseText);
+            } else {
+                console.log("Finished " + i);
+            }
+        };
+
+        xhr.onerror = () => {
+            console.error("Connection problem.");
+        };
     }
 }
