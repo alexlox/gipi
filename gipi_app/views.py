@@ -4,6 +4,8 @@ from .models import User, History
 from django.contrib.auth.hashers import make_password, check_password
 import json
 import dateutil.parser
+import speech_recognition as sr
+from io import BytesIO
 
 # Create your views here.
 
@@ -106,3 +108,11 @@ def coordinates(request):
     history.save()
 
     return HttpResponse()
+
+
+def question(request):
+    file = BytesIO(request.body)
+    user_question = sr.AudioFile(file)
+
+    file.close()
+    return HttpResponse('{ "message": "OK" }')

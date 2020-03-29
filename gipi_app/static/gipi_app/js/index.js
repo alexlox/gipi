@@ -170,8 +170,7 @@ function startVoiceRecording () {
     };
 
     navigator.mediaDevices.getUserMedia(constraints).then(stream => {
-        console.log("getUserMedia() success, stream created, initializing Recorder.js ...");
-        /* assign to gumStream for later use */
+        // Assign to gumStream for later use
         gumStream = stream;
         let input = audioContext.createMediaStreamSource(stream);
         rec = new Recorder(input, {
@@ -179,7 +178,6 @@ function startVoiceRecording () {
         });
         //start the recording process
         rec.record();
-        console.log("Recording started");
     }).catch(() => {
         document.getElementById("startVoiceRecordButton").style.display = "block";
         document.getElementById("stopVoiceRecordButton").style.display = "none";
