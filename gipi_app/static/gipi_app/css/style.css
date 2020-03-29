@@ -42,7 +42,8 @@ button {
 }
 
 #record {
-    width: 6rem;
+    width: 8rem;
+    margin-bottom: 2rem;
 }
 
 button:hover {
@@ -70,4 +71,14 @@ form input {
     margin-bottom: 0.5rem;
     width: 10rem;
     height: 2rem;
+}
+
+#startVoiceRecordButton, #stopVoiceRecordButton {
+    width: 3rem;
+    height: 4.5em;
+    cursor: pointer;
+}
+
+#stopVoiceRecordButton {
+    display: none;
 }

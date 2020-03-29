@@ -21,9 +21,16 @@
         {% if not user.authenticated %}
             <span>Please <a href="/login">log in</a> or <a href="/signUp">sign up</a> to continue!</span>
         {% else %}
-            <button id="record" data-action="start">Start Record</button>
+            <button id="record" data-action="start">Start the journey!</button>
+            <img id="startVoiceRecordButton" src="{% static 'gipi_app/img/start_record.png' %}" alt="Start voice recording" />
+            <img id="stopVoiceRecordButton" src="{% static 'gipi_app/img/stop_record.png' %}" alt="Stop voice recording" />
+            <div id="answer"></div>
         {% endif %}
     </div>
+
+    {% if user.authenticated %}
+        <script src="{% static 'gipi_app/js/recorder.js' %}"></script>
+    {% endif %}
 
     {% csrf_token %}
     <script src="{% static 'gipi_app/js/index.js' %}"></script>

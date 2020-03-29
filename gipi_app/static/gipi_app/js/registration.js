@@ -11,7 +11,7 @@ window.onload = () => {
             password: document.getElementById("inPassword").value
         };
 
-        document.getElementsByName("submit")[0].setAttribute("disabled", "");
+        document.getElementsByName("submit")[0].disabled = true;
 
         let xhr = new XMLHttpRequest();
 
@@ -21,7 +21,7 @@ window.onload = () => {
         xhr.send(JSON.stringify(body));
 
         xhr.onload = () => {
-            document.getElementsByName("submit")[0].removeAttribute("disabled");
+            document.getElementsByName("submit")[0].disabled = false;
 
             if (xhr.status === 200) {
                 window.location.href = "/";
@@ -34,7 +34,7 @@ window.onload = () => {
         };
 
         xhr.onerror = () => {
-            document.getElementsByName("submit")[0].removeAttribute("disabled");
+            document.getElementsByName("submit")[0].disabled = false;
             document.getElementById("loginMessage").innerText = "Please check your internet connection.";
         }
     });
@@ -50,7 +50,7 @@ window.onload = () => {
             password: document.getElementById("inPassword").value
         };
 
-        document.getElementsByName("submit")[0].setAttribute("disabled", "");
+        document.getElementsByName("submit")[0].disabled = true;
 
         let xhr = new XMLHttpRequest();
 
@@ -60,7 +60,7 @@ window.onload = () => {
         xhr.send(JSON.stringify(body));
 
         xhr.onload = () => {
-            document.getElementsByName("submit")[0].removeAttribute("disabled");
+            document.getElementsByName("submit")[0].disabled = false;
 
             if (xhr.status === 200) {
                 window.location.href = "/";
@@ -74,7 +74,7 @@ window.onload = () => {
         };
 
         xhr.onerror = () => {
-            document.getElementsByName("submit")[0].removeAttribute("disabled");
+            document.getElementsByName("submit")[0].disabled = false;
             document.getElementById("signupMessage").innerText = "Please check your internet connection.";
         }
     });
