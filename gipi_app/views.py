@@ -6,6 +6,7 @@ import json
 import dateutil.parser
 import speech_recognition as sr
 from io import BytesIO
+import unicodedata
 
 # Create your views here.
 
@@ -114,5 +115,38 @@ def question(request):
     file = BytesIO(request.body)
     user_question = sr.AudioFile(file)
 
+    with user_question as source:
+        audio=sr.Recognizer().record(source)
+    type(audio)
+    stringy = sr.Recognizer().recognize_google(audio,language='ro-RO')
+    stringy = strip_accents(stringy)
+    
+
+    response = str(controller(parser(stringy)))
+
     file.close()
-    return HttpResponse('{ "message": "OK" }')
+    return HttpResponse('{ "message": "' + response + '" }')
+
+def controller(_dict):
+
+    return str(_dict)
+
+def strip_accents(s):
+   return ''.join(c for c in unicodedata.normalize('NFD', s) # import unicodedata
+                  if unicodedata.category(c) != 'Mn')
+
+def parser(s):
+    thisdict = {'location' : '',
+    'time' : ''
+    }
+    stringy = ''
+    if 'cand am fost la' in s:
+        stringy = s.replace('cand am fost la ', '')
+        thisdict['location'] = stringy
+        del thisdict['time']
+    if 'unde am fost la' in s:
+        stringy = s.replace('unde am fost la ora ', '')
+        thisdict['time'] = stringy
+        del thisdict['location']
+    return thisdict
+
