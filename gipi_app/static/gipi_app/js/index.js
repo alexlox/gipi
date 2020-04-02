@@ -129,8 +129,11 @@ function loadMockCoordinates () {
 
 function uploadMockHistory (mockCoordinates) {
     console.log("Start upload mock coordinates");
-    let startTime = new Date(2020, 3, 24, 7, 15, 0),
+    let startTime = new Date(),
         actualTime;
+
+    startTime.setHours(7);
+    startTime.setMinutes(15);
 
     for (let i = 0; i < mockCoordinates.length; i++) {
         // plus 5 minutes for every coordinate

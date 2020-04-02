@@ -1,6 +1,5 @@
 import datetime
 import googlemaps
-from time import strptime
 from django.shortcuts import render, redirect
 from django.http import HttpResponseBadRequest, HttpResponse
 from .models import User, History
@@ -12,6 +11,9 @@ from io import BytesIO
 import unicodedata
 import re
 
+
+with open('gipi_app/config.json', 'r') as conf_file:
+    config = json.loads(conf_file.read())
 
 # Create your views here.
 
@@ -134,14 +136,8 @@ def question(request):
 
     stringy = strip_accents(stringy)
 
-    response = str(controller(parser(stringy)))
-
     file.close()
-    return HttpResponse('{ "message": "' + response + '" }')
-
-
-def controller(_dict):
-    return str(_dict)
+    return HttpResponse('{ "message": "' + parser(stringy) + '" }')
 
 
 def strip_accents(s):
@@ -174,34 +170,48 @@ def parser(user_question):
         time = search_time.group(1)
         this_dict['time'] = time
 
-    return this_dict
+    if 'time' in this_dict:
+        # There are only digits in the found time
+        if re.match('^[0-9]+$', this_dict['time']) is not None:
+            # One or two digits mean only the hour
+            if len(this_dict['time']) == 1:
+                this_dict['time'] = '0' + this_dict['time'] + ':00'
+            elif len(this_dict['time']) == 2:
+                this_dict['time'] = this_dict['time'] + ':00'
+            # Three or four digits is hour + time without ':'
+            elif len(this_dict['time']) == 3:
+                this_dict['time'] = this_dict['time'][0:1] + ':' + this_dict['time'][1:]
+            elif len(this_dict['time']) == 4:
+                this_dict['time'] = this_dict['time'][0:2] + ':' + this_dict['time'][2:]
+
+    return 'Response for \'{0}\': {1}'.format((this_dict['time'] if 'time' in this_dict else this_dict['location']),
+                                              controller(this_dict))
 
 
-# def switch_compute(dictionary):
-#     if "location" in dictionary.keys():
-#         compute_location(dictionary["location"])
-#     else:
-#         if "time" in dictionary.keys():
-#             compute_time(dictionary["time"])
+def controller(dictionary):
+    if "location" in dictionary.keys():
+        return compute_location(dictionary["location"])
+    elif "time" in dictionary.keys():
+        return compute_time(dictionary["time"])
+
+    return 'A problem occurred'
 
 
-def compute_location():
-    gmaps = googlemaps.Client(key="AIzaSyAjawcZ0rRWBr-cQBMwjk1xbeV5KsowvHw")
-    geocode_result = gmaps.geocode('Strada Atelierului 4, Iași, Romania')
+def compute_location(location):
+    gmaps = googlemaps.Client(key=config['google_key'])
+    geocode_result = gmaps.geocode(location)
     datalist = list()
     lat = 0
     lng = 0
-    for addreses in geocode_result:
+    for addresses in geocode_result:
         try:
-            lng = addreses["geometry"]["location"]["lng"]
-            lat = addreses["geometry"]["location"]["lat"]
+            lng = addresses["geometry"]["location"]["lng"]
+            lat = addresses["geometry"]["location"]["lat"]
         except KeyError:
-            err = list()
-
-    # 27.57481 - Baza de date
-    # 27.603963 - Google Maps
+            return "A problem occurred."
 
     aux = None
+    timestamp_object = None
 
     for x in History.objects.raw("Select * from gipi_app_history where latitude >= %s and latitude <= %s and "
                                  "longitude <= %s and longitude >= %s", [lat - 0.2, lat + 0.2, lng + 0.2, lng - 0.2]):
@@ -214,20 +224,27 @@ def compute_location():
                 aux = (abs(lat - float(x.latitude)) + abs(lng - float(x.longitude))) / 2
                 timestamp_object = x
 
+    if timestamp_object is None:
+        return "Location is not registered for this time."
+
     return str(timestamp_object.timestamp.hour) + ":" + str(timestamp_object.timestamp.minute)
 
 
-def compute_time():
-    input_data = strptime("19:00:00", "%H:%M:%S")
+def compute_time(time):
     currentDT = datetime.datetime.now()
-    time = currentDT.replace(hour=input_data.tm_hour, minute=input_data.tm_min,
-                             second=input_data.tm_sec) - datetime.timedelta(days=1)
 
-    d2 = datetime.datetime.strptime(str(time), "%Y-%m-%d %H:%M:%S.%f")
+    hour_minute = time.split(':')
+
+    if len(hour_minute) < 2:
+        return 'A problem occurred.'
+
+    parsed_time = currentDT.replace(hour=int(hour_minute[0]), minute=int(hour_minute[1]), second=0)
+
+    d2 = datetime.datetime.strptime(str(parsed_time), "%Y-%m-%d %H:%M:%S.%f")
     aux = None
     location_object = None
     for x in History.objects.raw("Select * from gipi_app_history where timestamp >= %s and timestamp <= %s ",
-                                 [time - datetime.timedelta(minutes=30), time + datetime.timedelta(minutes=30)]):
+                                 [parsed_time - datetime.timedelta(minutes=30), parsed_time + datetime.timedelta(minutes=30)]):
 
         d1 = datetime.datetime.strptime(str(x.timestamp), "%Y-%m-%d %H:%M:%S.%f%z").replace(tzinfo=None)
 
@@ -239,14 +256,16 @@ def compute_time():
                 aux = abs((d1 - d2).total_seconds())
                 location_object = x
 
-    gmaps = googlemaps.Client(key="AIzaSyAjawcZ0rRWBr-cQBMwjk1xbeV5KsowvHw")
+    if location_object is None:
+        return 'Time is not registered for this location.'
+
+    gmaps = googlemaps.Client(key=config['google_key'])
     reverse_geocode_result = gmaps.reverse_geocode((location_object.latitude, location_object.longitude))
 
-    datalist = list()
-
-    for addreses in reverse_geocode_result:
+    for addresses in reverse_geocode_result:
         try:
-            datalist.append(addreses['formatted_address'])
+            return addresses['formatted_address']
         except KeyError:
-            datalist = list()
-    return str(datalist[0])
+            return 'A problem occurred.'
+
+    return 'Time is not registered for this location.'
