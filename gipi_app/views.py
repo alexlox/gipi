@@ -7,12 +7,13 @@ import dateutil.parser
 import speech_recognition as sr
 from io import BytesIO
 import unicodedata
+import re
+
 
 # Create your views here.
 
 
 def index(request):
-
     authenticated = True if "username" in request.session else False
     username = request.session["username"] if "username" in request.session else ""
 
@@ -115,38 +116,59 @@ def question(request):
     file = BytesIO(request.body)
     user_question = sr.AudioFile(file)
 
+    recognizer_instance = sr.Recognizer()
+    recognizer_instance.energy_threshold = 200
+
     with user_question as source:
-        audio=sr.Recognizer().record(source)
-    type(audio)
-    stringy = sr.Recognizer().recognize_google(audio,language='ro-RO')
+        audio = recognizer_instance.record(source)
+
+    try:
+        stringy = recognizer_instance.recognize_google(audio, language='ro-RO')
+    except sr.UnknownValueError:
+        return HttpResponse('{ "message": "Speech is unintelligible." }')
+    except sr.RequestError:
+        return HttpResponse('{ "message": "Speech recognition failed." }')
+
     stringy = strip_accents(stringy)
-    
 
     response = str(controller(parser(stringy)))
 
     file.close()
     return HttpResponse('{ "message": "' + response + '" }')
 
-def controller(_dict):
 
+def controller(_dict):
     return str(_dict)
 
+
 def strip_accents(s):
-   return ''.join(c for c in unicodedata.normalize('NFD', s) # import unicodedata
-                  if unicodedata.category(c) != 'Mn')
+    return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
 
-def parser(s):
-    thisdict = {'location' : '',
-    'time' : ''
-    }
-    stringy = ''
-    if 'cand am fost la' in s:
-        stringy = s.replace('cand am fost la ', '')
-        thisdict['location'] = stringy
-        del thisdict['time']
-    if 'unde am fost la' in s:
-        stringy = s.replace('unde am fost la ora ', '')
-        thisdict['time'] = stringy
-        del thisdict['location']
-    return thisdict
 
+def parser(user_question):
+    this_dict = {}
+
+    search_location = re.match('cand.*la (.+)', user_question, re.IGNORECASE)
+    search_time = re.match('unde.*la (.+)', user_question, re.IGNORECASE)
+
+    if search_location is None and search_time is None:
+        search_general = re.match('.*la (.+)', user_question, re.IGNORECASE)
+
+        if search_general is None:
+            return "Speech is unintelligible."
+
+        time_from_general = re.match('[0-9:]+', search_general.group(1))
+
+        if time_from_general is not None:
+            this_dict['time'] = time_from_general.group(0)
+        else:
+            this_dict['location'] = search_general.group(1)
+
+    if search_location is not None:
+        location = search_location.group(1)
+        this_dict['location'] = location
+    elif search_time is not None:
+        time = search_time.group(1)
+        this_dict['time'] = time
+
+    return this_dict
