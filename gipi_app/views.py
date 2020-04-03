@@ -11,9 +11,9 @@ from io import BytesIO
 import unicodedata
 import re
 
-
 with open('gipi_app/config.json', 'r') as conf_file:
     config = json.loads(conf_file.read())
+
 
 # Create your views here.
 
@@ -31,6 +31,7 @@ def index(request):
     return render(request, 'gipi_app/index.html', context)
 
 
+# noinspection DuplicatedCode
 def login(request):
     if request.method == 'GET':
         return render(request, 'gipi_app/login.html')
@@ -65,6 +66,7 @@ def login(request):
     return resp
 
 
+# noinspection DuplicatedCode
 def sign_up(request):
     if request.method == 'GET':
         return render(request, 'gipi_app/sign_up.html')
@@ -144,6 +146,7 @@ def strip_accents(s):
     return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
 
 
+# noinspection DuplicatedCode
 def parser(user_question):
     this_dict = {}
 
@@ -200,7 +203,6 @@ def controller(dictionary):
 def compute_location(location):
     gmaps = googlemaps.Client(key=config['google_key'])
     geocode_result = gmaps.geocode(location)
-    datalist = list()
     lat = 0
     lng = 0
     for addresses in geocode_result:
@@ -231,20 +233,21 @@ def compute_location(location):
 
 
 def compute_time(time):
-    currentDT = datetime.datetime.now()
+    current_dt = datetime.datetime.now()
 
     hour_minute = time.split(':')
 
     if len(hour_minute) < 2:
         return 'A problem occurred.'
 
-    parsed_time = currentDT.replace(hour=int(hour_minute[0]), minute=int(hour_minute[1]), second=0)
+    parsed_time = current_dt.replace(hour=int(hour_minute[0]), minute=int(hour_minute[1]), second=0)
 
     d2 = datetime.datetime.strptime(str(parsed_time), "%Y-%m-%d %H:%M:%S.%f")
     aux = None
     location_object = None
     for x in History.objects.raw("Select * from gipi_app_history where timestamp >= %s and timestamp <= %s ",
-                                 [parsed_time - datetime.timedelta(minutes=30), parsed_time + datetime.timedelta(minutes=30)]):
+                                 [parsed_time - datetime.timedelta(minutes=30),
+                                  parsed_time + datetime.timedelta(minutes=30)]):
 
         d1 = datetime.datetime.strptime(str(x.timestamp), "%Y-%m-%d %H:%M:%S.%f%z").replace(tzinfo=None)
 
