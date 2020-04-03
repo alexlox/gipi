@@ -83,3 +83,17 @@ form input {
 #stopVoiceRecordButton {
     display: none;
 }
+
+#uploadMockData {
+    background-color: #8e0000;
+    color: #eaeaea;
+    margin-right: 40px;
+    width: 8rem;
+}
+
+#uploadMockDataMessages {
+    position: absolute;
+    top: 5rem;
+    width: 100%;
+    font-size: 1.5rem;
+}

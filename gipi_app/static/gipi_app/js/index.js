@@ -5,7 +5,6 @@ let csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0].value,
     rec;
 
 window.onload = () => {
-    // loadMockCoordinates();
 
     if (!navigator.geolocation) {
         alert("Geolocation is not available on your device or browser.");
@@ -63,6 +62,10 @@ window.onload = () => {
             document.getElementById("stopVoiceRecordButton").style.display = "none";
 
             stopVoiceRecording();
+        });
+
+        document.getElementById("uploadMockData").addEventListener("click", () => {
+            loadMockCoordinates();
         });
     } else {
         document.getElementById("logInBtn").addEventListener("click", () => {
@@ -154,14 +157,16 @@ function uploadMockHistory (mockCoordinates) {
 
         xhr.onload = () => {
             if (xhr.status !== 200) {
-                console.error(xhr.responseText);
+                document.getElementById("uploadMockDataMessages").innerText =
+                    document.getElementById("uploadMockDataMessages").innerText + "\nError " + i;
             } else {
-                console.log("Finished " + i);
+                document.getElementById("uploadMockDataMessages").innerText =
+                    document.getElementById("uploadMockDataMessages").innerText + "\nFinished " + i;
             }
         };
 
         xhr.onerror = () => {
-            console.error("Connection problem.");
+            alert("Connection problem.");
         };
     }
 }

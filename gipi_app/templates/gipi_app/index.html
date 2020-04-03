@@ -13,6 +13,7 @@
             <button id="signUpBtn">Sign up</button>
             <button id="logInBtn">Log in</button>
         {% else %}
+            <button id="uploadMockData" style="background-color: red">Upload Mock Data</button>
             <span>Welcome, {{ user.username }}!</span>
             <button id="logOutBtn">Log out</button>
         {% endif %}
@@ -25,6 +26,7 @@
             <img id="startVoiceRecordButton" src="{% static 'gipi_app/img/start_record.png' %}" alt="Start voice recording" />
             <img id="stopVoiceRecordButton" src="{% static 'gipi_app/img/stop_record.png' %}" alt="Stop voice recording" />
             <div id="answer"></div>
+            <div id="uploadMockDataMessages"></div>
         {% endif %}
     </div>
 
