@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %}<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -25,4 +25,45 @@
     {% csrf_token %}
     <script src="{% static 'gipi_app/js/registration.js' %}"></script>
 </body>
+</html>{% endcomment %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gipi - Login</title>
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'gipi_app/css/style.css' %}">
+</head>
+<body>
+    <nav></nav>
+    <div id="container">
+        <div id="welcome">
+            <img id="welcomeImage" src="{% static 'gipi_app/img/background.jpeg' %}"  alt="image"/>
+            <div id="registerContainer">
+                <div id="welcomeContainer">
+                    <span>Welcome to Gipi!</span>
+                    <div id="welcomeButtons">
+                        <form id="loginForm">
+                            <label for="inUsername">Username</label>
+                            <input id="inUsername" type="text" name="username" placeholder="Ex: Gipi" required />
+
+                            <label for="inPassword">Password</label>
+                            <input id="inPassword" type="password" name="password" placeholder="Ex: G!p!P@ss" required />
+
+                            <button type="submit" class="welcomeButton" name="submit">Log In</button>
+                        </form>
+                    </div>
+                </div>
+                <p id="loginMessage" class="errorMessages"></p>
+            </div>
+        </div>
+    </div>
+
+    {% csrf_token %}
+    <script src="{% static 'gipi_app/js/registration.js' %}"></script>
+</body>
 </html>
+
+

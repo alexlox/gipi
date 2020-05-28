@@ -1,19 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
 html, body {
     margin: 0;
     padding: 0;
     height: 100%;
     width: 100%;
+    font-family: 'Roboto', sans-serif;
 }
 
 nav {
     width: 100%;
-    background-color: azure;
+    background-color: #4c4c4c;
     height: 3rem;
     display: flex;
     justify-content: flex-end;
     align-content: center;
     align-items: center;
     box-shadow: #282727 0 2px 5px;
+    color: white;
 }
 
 nav > button {
@@ -69,19 +73,19 @@ form {
 
 form input {
     margin-bottom: 0.5rem;
-    width: 10rem;
+    width: 9.5rem;
     height: 2rem;
 }
 
 #startVoiceRecordButton, #stopVoiceRecordButton {
-    width: 3rem;
-    height: 4.5em;
+    width: 5rem;
     cursor: pointer;
     margin-bottom: 2rem;
 }
 
 #stopVoiceRecordButton {
     display: none;
+    filter: brightness(85%);
 }
 
 #uploadMockData {
@@ -96,4 +100,63 @@ form input {
     top: 5rem;
     width: 100%;
     font-size: 1.5rem;
+}
+
+#welcomeContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: 300px;
+    width: 300px;
+    background-color: #4c4c4c;
+    border: 2px #262626 solid;
+    border-radius: 5%;
+    color: white;
+    font-size: 1.5rem;
+
+}
+
+#welcome {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+}
+
+#welcomeImage {
+    height: 300px;
+}
+
+#welcomeButtons {
+    display: flex;
+    flex-direction: column;
+    height: 100px;
+    justify-content: space-around;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.welcomeButton {
+    width: 10rem;
+    height: 2.5rem;
+    font-size: 1rem;
+    border-radius: 5%;
+}
+
+label {
+    font-size: 1rem;
+}
+
+.errorMessages {
+    font-size: 1rem;
+}
+
+#registerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+    margin-right: 10rem;
 }

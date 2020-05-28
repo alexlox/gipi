@@ -8,21 +8,32 @@
     <link rel="stylesheet" type="text/css" href="{% static 'gipi_app/css/style.css' %}">
 </head>
 <body>
+    <nav></nav>
     <div id="container">
-        <form id="signupForm">
-            <label>Username
-                <input id="inUsername" type="text" name="username" placeholder="Username" required maxlength="64" />
-            </label>
-            <label>Password
-                <input id="inPassword" type="password" name="password" placeholder="Password" required />
-            </label>
+        <div id="welcome">
+            <img id="welcomeImage" src="{% static 'gipi_app/img/background.jpeg' %}"  alt="image"/>
+            <div id="registerContainer">
+                <div id="welcomeContainer">
+                    <span>Welcome to Gipi!</span>
+                    <div id="welcomeButtons">
+                        <form id="signupForm">
+                            <label for="inUsername">Username</label>
+                            <input id="inUsername" type="text" name="username" placeholder="Ex: Gipi" required maxlength="64" />
 
-            <button type="submit" name="submit">Sign Up</button>
-        </form>
-        <p id="signupMessage"></p>
+                            <label for="inPassword">Password</label>
+                            <input id="inPassword" type="password" name="password" placeholder="Ex: G!p!P@ss" required />
+
+                            <button type="submit" class="welcomeButton" name="submit">Sign Up</button>
+                        </form>
+                    </div>
+                </div>
+                <p id="signupMessage" class="errorMessages"></p>
+            </div>
+        </div>
     </div>
 
     {% csrf_token %}
     <script src="{% static 'gipi_app/js/registration.js' %}"></script>
 </body>
 </html>
+

@@ -229,7 +229,9 @@ def compute_location(location):
     if timestamp_object is None:
         return "Location is not registered for this time."
 
-    return str(timestamp_object.timestamp.hour) + ":" + str(timestamp_object.timestamp.minute)
+    return str(timestamp_object.timestamp.hour) + ":" + ('0' + str(timestamp_object.timestamp.minute)
+                                                         if timestamp_object.timestamp.minute < 10
+                                                         else str(timestamp_object.timestamp.minute))
 
 
 def compute_time(time):

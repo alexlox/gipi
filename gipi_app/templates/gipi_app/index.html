@@ -9,10 +9,7 @@
 </head>
 <body>
     <nav>
-        {% if not user.authenticated %}
-            <button id="signUpBtn">Sign up</button>
-            <button id="logInBtn">Log in</button>
-        {% else %}
+        {% if user.authenticated %}
             <button id="uploadMockData" style="background-color: red">Upload Mock Data</button>
             <span>Welcome, {{ user.username }}!</span>
             <button id="logOutBtn">Log out</button>
@@ -20,11 +17,20 @@
     </nav>
     <div id="container">
         {% if not user.authenticated %}
-            <span>Please <a href="/login">log in</a> or <a href="/signUp">sign up</a> to continue!</span>
+            <div id="welcome">
+                <img id="welcomeImage" src="{% static 'gipi_app/img/background.jpeg' %}"  alt="image"/>
+                <div id="welcomeContainer">
+                    <span>Welcome to Gipi!</span>
+                    <div id="welcomeButtons">
+                        <button id="signUpBtn" class="welcomeButton">Sign up</button>
+                        <button id="logInBtn" class="welcomeButton">Log in</button>
+                    </div>
+                </div>
+            </div>
         {% else %}
             <button id="record" data-action="start">Start the journey!</button>
-            <img id="startVoiceRecordButton" src="{% static 'gipi_app/img/start_record.png' %}" alt="Start voice recording" />
-            <img id="stopVoiceRecordButton" src="{% static 'gipi_app/img/stop_record.png' %}" alt="Stop voice recording" />
+            <img id="startVoiceRecordButton" src="{% static 'gipi_app/img/start_record2.png' %}" alt="Start voice recording" />
+            <img id="stopVoiceRecordButton" src="{% static 'gipi_app/img/start_record2.png' %}" alt="Stop voice recording" />
             <div id="answer"></div>
             <div id="uploadMockDataMessages"></div>
         {% endif %}
